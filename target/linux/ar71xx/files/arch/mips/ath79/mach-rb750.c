@@ -347,3 +347,25 @@ static void __init rb751g_setup(void)
 
 MIPS_MACHINE(ATH79_MACH_RB_751G, "751g", "MikroTik RouterBOARD 751G",
 	     rb751g_setup);
+
+static void __init omni_5fe_setup(void)
+{
+	ath79_init_mac(ath79_eth0_data.mac_addr, ath79_mac_base, 0);
+ 	ath79_init_mac(ath79_eth1_data.mac_addr,  ath79_mac_base, 1);
+ 	ath79_register_mdio(0, 0x0);
+
+ 	ath79_register_eth(1);
+ 	ath79_register_eth(0);
+
+ 	rb750_nand_data.nce_line = RB7XX_NAND_NCE;
+ 	rb750_nand_data.enable_pins = rb750gr3_nand_enable_pins;
+ 	rb750_nand_data.disable_pins = rb750gr3_nand_disable_pins;
+ 	rb750_nand_data.latch_change = rb750gr3_latch_change;
+ 	platform_device_register(&rb750_nand_device);
+
+ 	ath79_register_usb();
+ 	rb751_wlan_setup();
+ }
+
+MIPS_MACHINE(ATH79_MACH_RB_O5FE, "omni-5fe", "Mikrotik RouterBOARD OmniTIK UPA-5HnD",
+	     omni_5fe_setup);

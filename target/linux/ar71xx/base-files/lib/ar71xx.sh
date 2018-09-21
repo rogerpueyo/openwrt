@@ -1119,6 +1119,9 @@ ar71xx_board_detect() {
 	*"RouterBOARD mAP L-2nD")
 		name="rb-mapl-2nd"
 		;;
+	*"RouterBOARD OmniTIK UPA-5HnD")
+		name="rb-upa-5hnd"
+		;;
 	*"RouterBOARD SXT Lite2")
 		name="rb-sxt2n"
 		;;

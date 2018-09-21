@@ -28,6 +28,7 @@ define Device/nand-large
   $(Device/mikrotik-nand)
   MIKROTIK_CHUNKSIZE := 2048
   DEVICE_TITLE := MikroTik RouterBoard (>= 128 MB NAND)
+	SUPPORTED_DEVICES := rb-upa-5hnd
 endef
 TARGET_DEVICES += nand-large
 

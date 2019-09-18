@@ -106,6 +106,13 @@ define Device/ubnt_rocket-m
 endef
 TARGET_DEVICES += ubnt_rocket-m
 
+define Device/ubnt_nanostation-loco-m-xw
+  $(Device/ubnt-xw)
+  DEVICE_TITLE := Ubiquiti Nanostation Loco M (XW)
+  SUPPORTED_DEVICES += loco-m-xw
+endef
+TARGET_DEVICES += ubnt_nanostation-loco-m-xw
+
 define Device/ubnt_nanostation-m
   $(Device/ubnt-xm)
   DEVICE_TITLE := Ubiquiti Nanostation M

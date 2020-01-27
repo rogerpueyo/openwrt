@@ -9,6 +9,14 @@ define Device/mikrotik_routerboard-493g
 endef
 TARGET_DEVICES += mikrotik_routerboard-493g
 
+define Device/mikrotik_routerboard-750gl
+  $(Device/mikrotik_nand)
+  SOC := ar7242
+  DEVICE_MODEL := RouterBOARD 750GL
+  DEVICE_PACKAGES += kmod-usb-ehci kmod-usb2
+  SUPPORTED_DEVICES += rb-750gl
+endef
+
 define Device/mikrotik_routerboard-912uag-2hpnd
   $(Device/mikrotik_nand)
   SOC := ar9342

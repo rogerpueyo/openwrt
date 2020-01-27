@@ -11,6 +11,17 @@ define Device/mikrotik_routerboard-493g
 endef
 TARGET_DEVICES += mikrotik_routerboard-493g
 
+define Device/mikrotik_routerboard-750gl
+  $(Device/mikrotik)
+  SOC := ar7242
+  DEVICE_MODEL := RouterBOARD 750GL
+  IMAGE/sysupgrade.bin = append-kernel | kernel2minor -s 2048 -e -c | \
+	sysupgrade-tar kernel=$$$$@ | append-metadata
+  DEVICE_PACKAGES += nand-utils
+  SUPPORTED_DEVICES += rb-750gl
+endef
+TARGET_DEVICES += mikrotik_routerboard-750gl
+
 define Device/mikrotik_routerboard-922uags-5hpacd
   $(Device/mikrotik)
   SOC := qca9558

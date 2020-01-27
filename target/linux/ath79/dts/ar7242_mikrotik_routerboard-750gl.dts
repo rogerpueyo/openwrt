@@ -1,0 +1,159 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "ar7242.dtsi"
+
+/ {
+	compatible = "mikrotik,routerboard-750gl", "qca,ar7242";
+	model = "MikroTik RouterBOARD 750GL";
+
+	aliases {
+		label-mac-device = &eth0;
+/*		led-boot = &led_act;
+		led-failsafe = &led_act;
+		led-upgrade = &led_act;*/
+		serial0 = &uart;
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200n8";
+	};
+
+	leds: leds {
+		compatible = "gpio-leds";
+
+/*		led_act: act {
+			label = "mikrotik:green:act";
+			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
+		};*/
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		gpio_nand_power {
+			gpio-export,name = "mikrotik:power:nand";
+			gpio-export,output = <1>;
+			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&spi {
+	status = "okay";
+
+	cs-gpios = <0>, <0>;
+	num-cs = <2>;
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <40000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "RouterBoot";
+				reg = <0x0 0x10000>;
+				read-only;
+				compatible = "mikrotik,routerboot-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					label = "bootloader1";
+					reg = <0x0 0x0>;
+					read-only;
+				};
+
+				hard_config: hard_config {
+					label = "hard_config";
+					read-only;
+				};
+
+				bios {
+					label = "bios";
+					size = <0x1000>;
+					read-only;
+				};
+
+				partition {
+					label = "bootloader2";
+					read-only;
+				};
+
+				soft_config {
+					label = "soft_config";
+				};
+			};
+		};
+	};
+};
+
+&nand{
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "booter";
+			reg = <0x0000000 0x0040000>;
+			read-only;
+		};
+
+		partition@40000 {
+			label = "kernel";
+			reg = <0x0040000 0x0800000>;
+		};
+
+		partition@400000 {
+			label = "ubi";
+			reg = <0x0840000 0x77c0000>;
+		};
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	phy0: ethernet-switch@0 {
+		compatible = "qca,ar8327";
+		reg = <0x0>;
+
+		qca,ar8327-initvals = <
+			0x04 0x05100000 /* PORT0 PAD MODE CTRL */
+			0x0c 0x05100000 /* PORT6 PAD MODE CTRL */
+			0x50 0x40004000 /* LED_CTRL0 */
+			0x54 0x40004000 /* LED_CTRL1 */
+			0x58 0x40004000 /* LED_CTRL2 */
+			0x5c 0x03ffff00 /* LED_CTRL3 */
+			0x7c 0x0000007e /* PORT0_STATUS */
+			0x94 0x0000007e /* PORT6_STATUS */
+		>;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	phy-handle = <&phy0>;
+	phy-mode = "rgmii";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&uart {
+	status = "okay";
+};

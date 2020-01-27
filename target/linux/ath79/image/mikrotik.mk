@@ -11,6 +11,18 @@ define Device/mikrotik_routerboard-493g
 endef
 TARGET_DEVICES += mikrotik_routerboard-493g
 
+define Device/mikrotik_omni-5fe
+  $(Device/mikrotik)
+  SOC := ar7241
+  DEVICE_MODEL := OMNI-5FE platform
+  DEVICE_ALT0_VENDOR := MikroTik
+  DEVICE_ALT0_MODEL := OmniTIK UPA-5HnD
+  IMAGE/sysupgrade.bin = append-kernel | kernel2minor -s 2048 -e -c | \
+	sysupgrade-tar kernel=$$$$@ | append-metadata
+  DEVICE_PACKAGES += nand-utils
+endef
+TARGET_DEVICES += mikrotik_omni-5fe
+
 define Device/mikrotik_routerboard-922uags-5hpacd
   $(Device/mikrotik)
   SOC := qca9558

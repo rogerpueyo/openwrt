@@ -17,6 +17,10 @@ ath79_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0@eth0" "2:lan:2" "3:lan:1" "1:wan"
 		;;
+	mikrotik,mikrotik_omnitik-upda-5hnd)
+		ucidef_add_switch "switch0" \
+			"0@eth0" "2:lan" "3:lan" "4:lan" "5:lan" "1:wan"
+		;;
 	netgear,wndr3700-v4|\
 	netgear,wndr4300|\
 	netgear,wndr4300-v2|\

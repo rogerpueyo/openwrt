@@ -111,6 +111,17 @@ define Device/glinet_gl-ar750s-nor
 endef
 TARGET_DEVICES += glinet_gl-ar750s-nor
 
+define Device/mikrotik_omnitik-upda-5hnd
+  $(Device/mikrotik)
+  SOC := ar7241
+  DEVICE_MODEL := OmniTIK UPA-5HnD
+  BOARD_NAME := routerboard
+  IMAGE/sysupgrade.bin = append-kernel | kernel2minor -s 2048 -e -c | \
+	sysupgrade-tar kernel=$$$$@ | append-metadata
+  DEVICE_PACKAGES += nand-utils
+endef
+TARGET_DEVICES += mikrotik_omnitik-upda-5hnd
+
 define Device/mikrotik_routerboard-922uags-5hpacd
   $(Device/mikrotik)
   SOC := qca9558

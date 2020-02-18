@@ -46,6 +46,15 @@ define Device/mikrotik_routerboard-lhg-2nd
 endef
 TARGET_DEVICES += mikrotik_routerboard-lhg-2nd
 
+define Device/mikrotik_routerboard-omnitik-upa-5hnd
+  $(Device/mikrotik_nand)
+  SOC := ar7241
+  DEVICE_MODEL := RouterBOARD OmniTIK UPA-5HnD
+  DEVICE_PACKAGES += kmod-usb2 nand-utils
+  BOARD_NAME := routerboard
+endef
+TARGET_DEVICES += mikrotik_routerboard-omnitik-upa-5hnd
+
 define Device/mikrotik_routerboard-sxt-5nd-r2
   $(Device/mikrotik_nand)
   SOC := ar9344

@@ -69,6 +69,16 @@ define Device/ubnt-wa
   UBNT_VERSION := 8.5.0
 endef
 
+define Device/ubnt-xc
+  $(Device/ubnt)
+  SOC := qca9558
+  IMAGE_SIZE := 15744k
+  UBNT_BOARD := XC
+  UBNT_CHIP := qca9558
+  UBNT_TYPE := XC
+  UBNT_VERSION := 8.5.0
+endef
+
 define Device/ubnt-xm
   $(Device/ubnt)
   SOC := ar7241
@@ -218,6 +228,13 @@ define Device/ubnt_picostation-m
   SUPPORTED_DEVICES += bullet-m
 endef
 TARGET_DEVICES += ubnt_picostation-m
+
+define Device/ubnt_powerbeam-ac
+  $(Device/ubnt-xc)
+  DEVICE_MODEL := PowerBeam AC
+  DEVICE_PACKAGES := kmod-ath10k-ct-smallbuffers ath10k-firmware-qca988x-ct rssileds
+endef
+TARGET_DEVICES += ubnt_powerbeam-ac
 
 define Device/ubnt_rocket-m
   $(Device/ubnt-xm)

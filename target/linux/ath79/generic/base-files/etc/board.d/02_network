@@ -50,6 +50,7 @@ ath79_setup_interfaces()
 	ubnt,nanostation-loco-m|\
 	ubnt,nanostation-loco-m-xw|\
 	ubnt,picostation-m|\
+	ubnt,powerbeam-ac|\
 	ubnt,rocket-m|\
 	ubnt,unifiac-lite|\
 	ubnt,unifiac-lr|\

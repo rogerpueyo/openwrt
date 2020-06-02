@@ -51,6 +51,7 @@ ath79_setup_interfaces()
 	ubnt,lap-120|\
 	ubnt,litebeam-ac-gen2|\
 	ubnt,nanobeam-ac|\
+	ubnt,nanobeam-m5-19|\
 	ubnt,nanobridge-m|\
 	ubnt,nanostation-ac-loco|\
 	ubnt,nanostation-loco-m|\

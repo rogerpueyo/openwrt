@@ -29,6 +29,8 @@ define Device/mikrotik_lhg-hb
   DEVICE_MODEL := LHG-HB platform
   DEVICE_ALT0_VENDOR := MikroTik
   DEVICE_ALT0_MODEL := LHG 2 (RBLHG-2nD)
+  DEVICE_ALT1_VENDOR := MikroTik
+  DEVICE_ALT1_MODEL := LHG XL 2 (RBLHG-2nD-XL)
   IMAGE_SIZE := 16256k
   IMAGE/sysupgrade.bin := append-kernel | kernel2minor -s 1024 -e | \
 	pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | \

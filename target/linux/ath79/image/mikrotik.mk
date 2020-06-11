@@ -27,6 +27,8 @@ define Device/mikrotik_lhg-hb
   $(Device/mikrotik)
   SOC := qca9533
   DEVICE_MODEL := LHG-HB platform
+  DEVICE_ALT0_VENDOR := MikroTik
+  DEVICE_ALT0_MODEL := LHG 2 (RBLHG-2nD)
   IMAGE_SIZE := 16256k
   IMAGE/sysupgrade.bin := append-kernel | kernel2minor -s 1024 -e | \
 	pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | \

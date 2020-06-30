@@ -126,7 +126,7 @@ static struct gpio_keys_button rbsxtlite_gpio_keys[] __initdata = {
 		.code		=	KEY_RESTART,
 		.debounce_interval	=	SXTLITE_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		=	SXTLITE_GPIO_BTN_RESET,
-		.active_low	=	0,
+		.active_low	=	1,
 	},
 };
 

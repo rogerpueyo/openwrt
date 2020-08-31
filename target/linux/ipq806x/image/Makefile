@@ -39,6 +39,7 @@ define Build/ipq-aux-loader-common
 		TEXT_BASE2="0x00000000" \
 		BOARD="$(BOARDNAME)" PLATFORM="$(PLATFORM)" \
 		BLOCKSIZE="$(BLOCKSIZE)" PAGESIZE="$(PAGESIZE)" \
+		LEBSIZE="$(AUX_LOADER_LEBSIZE)" LEBCOUNT="$(AUX_LOADER_LEBCOUNT)" \
 		UART="$(AUX_LOADER_UART)"	\
 		$(1) LOADER_TYPE=$(2) compile loader.$(2)
 	mv "$@.$(2)" "$@"
@@ -172,9 +173,10 @@ define Device/mikrotik_rb3011uias
 	$(call Device/MikrotikNAND)
 	DEVICE_MODEL := RB3011UiAS
 	SOC := qcom-ipq8064
-	BLOCKSIZE := 256k
-	PAGESIZE := 4096
-	AUX_LOADER_UART := 1
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	AUX_LOADER_LEBSIZE := 126976
+	AUX_LOADER_LEBCOUNT := 120
 	DEVICE_PACKAGES := kmod-gpio-beeper
 endef
 TARGET_DEVICES += mikrotik_rb3011uias

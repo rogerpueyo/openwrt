@@ -63,7 +63,7 @@
 
 		general: general {
 			gpios = <&qcom_pinmux 33 GPIO_ACTIVE_HIGH>;
-			label = "rb3011uias:green:general";
+			label = "rb3011uias:green:act";
 			pinctrl-0 = <&led_general_pins>;
 			pinctrl-names = "default";
 		};
@@ -89,102 +89,167 @@
 	status = "okay";
 };
 
-&gmac0 {
-	mdiobus = <&mdio0>;
-	mtd-mac-address = <&hard_config 0x10>;
-	mtd-mac-address-increment = <0>;
-	phy-mode = "rgmii";
-	pinctrl-0 = <&rgmii2_pins>;
-	pinctrl-names = "default";
-	qcom,id = <0>;
-	status = "okay";
-
-	fixed-link {
-		speed = <1000>;
-		full-duplex;
-	};
-};
-
-&gmac1 {
-	mtd-mac-address = <&hard_config 0x10>;
-	mtd-mac-address-increment = <1>;
-	phy-mode = "sgmii";
-	qcom,id = <1>;
-//	sfp = <&sfp_gmac1>;
-	status = "okay";
-
-	fixed-link {
-		speed = <1000>;
-		full-duplex;
-	};
-};
-
-&gmac2 {
-	mdiobus = <&mdio0>;
-	mtd-mac-address = <&hard_config 0x10>;
-	mtd-mac-address-increment = <2>;
-	phy-mode = "sgmii";
-	qcom,id = <2>;
-	status = "okay";
-
-	fixed-link {
-		speed = <1000>;
-		full-duplex;
-	};
-};
-
-&gmac3 {
-	mdiobus = <&mdio1>;
-	mtd-mac-address = <&hard_config 0x10>;
-	mtd-mac-address-increment = <3>;
-	phy-mode = "sgmii";
-	qcom,id = <3>;
-	status = "okay";
-
-	fixed-link {
-		speed = <1000>;
-		full-duplex;
-	};
-};
-
-&gsbi2 {
-	qcom,mode = <GSBI_PROT_SPI>;
-	status = "okay";
-
-	spi@124a0000 {
-		compatible = "qcom,spi-qup-v1.1.1";
-		reg = <0x124a0000 0x1000>;
-		interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
-
-		clocks = <&gcc GSBI2_QUP_CLK>, <&gcc GSBI2_H_CLK>;
-		clock-names = "core", "iface";
-
+&soc {
+	mdio1: mdio@37200000 {
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		pinctrl-0 = <&spi2_pins>;
-		pinctrl-names = "default";
+		compatible = "qcom,ipq8064-mdio", "syscon";
+		reg = <0x37200000 0x200000>;
+		resets = <&gcc GMAC_CORE2_RESET>;
+		reset-names = "stmmaceth";
+		clocks = <&gcc GMAC_CORE2_CLK>;
+		clock-names = "stmmaceth";
 
-		cs-gpios = <&qcom_pinmux 24 GPIO_ACTIVE_HIGH>;
-
-		spi-max-frequency = <2000000>;
+		status = "disabled";
 	};
 };
 
-&gsbi4 {
-	qcom,mode = <GSBI_PROT_I2C_UART>;
-	status = "disabled";
+&qcom_pinmux {
+	pinctrl-0 = <&switch0_reset_pin &switch1_reset_pin &lcd_pwr_pin &port10_poe_pin>;
+	pinctrl-names = "default";
 
-	serial@16340000 {
-		status = "disabled";
+	led_general_pins: led-general-pins {
+		mux {
+			pins = "gpio33";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
 	};
 
-	/*
-	 * The i2c device on gsbi4 should not be enabled.
-	 * On ipq806x designs gsbi4 i2c is meant for exclusive
-	 * RPM usage. Turning this on in kernel manifests as
-	 * i2c failure for the RPM.
-	 */
+	mdio0_pins: mdio0-pins {
+		mux {
+			pins = "gpio0", "gpio1";
+			function = "mdio";
+			drive-strength = <8>;
+			bias-disable;
+		};
+
+		clk {
+			pins = "gpio1";
+			input-disable;
+		};
+	};
+
+	mdio1_pins: mdio1-pins {
+		mux {
+			pins = "gpio10", "gpio11";
+			function = "mdio";
+			drive-strength = <8>;
+			bias-disable;
+		};
+
+		clk {
+			pins = "gpio11";
+			input-disable;
+		};
+	};
+
+	nand_pins: nand_pins {
+		disable {
+			pins = "gpio34", "gpio35", "gpio36",
+					"gpio37", "gpio38";
+			function = "nand";
+			drive-strength = <10>;
+			bias-disable;
+		};
+
+		pullups {
+			pins = "gpio39";
+			function = "nand";
+			drive-strength = <10>;
+			bias-pull-up;
+		};
+
+		hold {
+			pins = "gpio40", "gpio41", "gpio42",
+					"gpio43", "gpio44", "gpio45",
+					"gpio46", "gpio47";
+			function = "nand";
+			drive-strength = <10>;
+			bias-bus-hold;
+		};
+	};
+
+	reset_button_pins: reset-button-pins {
+		mux {
+			pins = "gpio66";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-pull-up;
+		};
+	};
+
+	rgmii2_pins: rgmii2-pins {
+		mux {
+			pins = "gpio27", "gpio28", "gpio29", "gpio30", "gpio31", "gpio32",
+						 "gpio51", "gpio52", "gpio59", "gpio60", "gpio61", "gpio62";
+			function = "rgmii2";
+			drive-strength = <8>;
+			bias-disable;
+		};
+	};
+
+	sfp_pins: sfp-pins {
+		mux {
+			pins = "gpio49", "gpio50", "gpio63", "gpio67", "gpio68";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-disable;
+		};
+	};
+
+	switch0_reset_pin: switch0-reset-pin {
+		mux {
+			pins = "gpio16";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-pull-down;
+			output-high;
+		};
+	};
+
+	switch1_reset_pin: switch1-reset-pin {
+		mux {
+			pins = "gpio17";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-pull-down;
+			output-high;
+		};
+	};
+
+	usb0_pwr_en_pins: usb0-pwr-en-pins {
+		mux {
+			pins = "gpio4";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-pull-down;
+			output-high;
+		};
+	};
+
+	lcd_pwr_pin: lcd-pwr-pin {
+		mux {
+			pins = "gpio48";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-pull-down;
+			output-low;
+		};
+	};
+
+	port10_poe_pin: port10-poe-pin {
+		mux {
+			pins = "gpio26";
+			function = "gpio";
+			drive-strength = <16>;
+			bias-pull-down;
+			output-high;
+		};
+	};
+
 };
 
 &gsbi5 {
@@ -279,51 +344,6 @@
 	status = "okay";
 };
 
-&mdio0 {
-	status = "okay";
-
-	pinctrl-0 = <&mdio0_pins>;
-	pinctrl-names = "default";
-
-	ethernet-phy@0 {
-		reg = <0>;
-		qca,ar8327-initvals = <
-			0x00004 0x07600000  /* PAD0_MODE */
-			0x00008 0x01000000  /* PAD5_MODE */
-			0x0000c 0x00000080  /* PAD6_MODE */
-			0x000e4 0x000aa545  /* MAC_POWER_SEL */
-			0x000e0 0xc74164de  /* SGMII_CTRL */
-			0x0007c 0x4e        /* PORT0_STATUS */
-			0x00094 0x4e        /* PORT6_STATUS */
-			0x00970 0x1e864443  /* QM_PORT0_CTRL0 */
-			0x00974 0x000001c6  /* QM_PORT0_CTRL1 */
-			0x00978 0x19008643  /* QM_PORT1_CTRL0 */
-			0x0097c 0x000001c6  /* QM_PORT1_CTRL1 */
-			0x00980 0x19008643  /* QM_PORT2_CTRL0 */
-			0x00984 0x000001c6  /* QM_PORT2_CTRL1 */
-			0x00988 0x19008643  /* QM_PORT3_CTRL0 */
-			0x0098c 0x000001c6  /* QM_PORT3_CTRL1 */
-			0x00990 0x19008643  /* QM_PORT4_CTRL0 */
-			0x00994 0x000001c6  /* QM_PORT4_CTRL1 */
-			0x00998 0x1e864443  /* QM_PORT5_CTRL0 */
-			0x0099c 0x000001c6  /* QM_PORT5_CTRL1 */
-			0x009a0 0x1e864443  /* QM_PORT6_CTRL0 */
-			0x009a4 0x000001c6  /* QM_PORT6_CTRL1 */
-		>;
-		qca,ar8327-vlans = <
-			0x1	0x7f	    /* VLAN1 Ports 0/1/2/3/4/5/6 */
-		>;
-	};
-
-	ethernet-phy@4 {
-		reg = <4>;
-		qca,ar8327-initvals = <
-			0x000e4 0x6a545     /* MAC_POWER_SEL */
-			0x0000c 0x80        /* PAD6_MODE */
-		>;
-	};
-};
-
 &nand_controller {
 	status = "okay";
 
@@ -356,344 +376,133 @@
 	};
 };
 
-&qcom_pinmux {
-	pinctrl-0 = <&switch0_reset_pin &switch1_reset_pin>;
-	pinctrl-names = "default";
-
-	i2c1_pins: i2c1-pinmux {
-		pins = "gpio53", "gpio54";
-		function = "gsbi1";
-		bias-disable;
-	};
-
-	led_general_pins: led-general-pins {
-		mux {
-			pins = "gpio33";
-			function = "gpio";
-			drive-strength = <2>;
-			bias-pull-down;
-		};
-	};
-
-	mdio0_pins: mdio0-pins {
-		mux {
-			pins = "gpio0", "gpio1";
-			function = "mdio";
-			drive-strength = <8>;
-			bias-disable;
-		};
-
-		clk {
-			pins = "gpio1";
-			input-disable;
-		};
-	};
-
-	mdio1_pins: mdio1-pins {
-		mux {
-			pins = "gpio10", "gpio11";
-			function = "mdio";
-			drive-strength = <8>;
-			bias-disable;
-		};
-
-		clk {
-			pins = "gpio11";
-			input-disable;
-		};
-	};
-
-	nand_pins: nand-pins {
-		mux {
-			pins = "gpio34", "gpio35", "gpio36",
-			       "gpio37", "gpio38", "gpio39",
-			       "gpio40", "gpio41", "gpio42",
-			       "gpio43", "gpio44", "gpio45",
-			       "gpio46", "gpio47";
-			function = "nand";
-			drive-strength = <10>;
-			bias-disable;
-		};
-		pullups {
-			pins = "gpio39";
-			bias-pull-up;
-		};
-		hold {
-			pins = "gpio40", "gpio41", "gpio42",
-			       "gpio43", "gpio44", "gpio45",
-			       "gpio46", "gpio47";
-			bias-bus-hold;
-		};
-	};
-
-	reset_button_pins: reset-button-pins {
-		mux {
-			pins = "gpio66";
-			function = "gpio";
-			drive-strength = <2>;
-			bias-pull-up;
-		};
-	};
-
-	rgmii2_pins: rgmii2-pins {
-		mux {
-			pins = "gpio27", "gpio28", "gpio29", "gpio30", "gpio31",
-			       "gpio32", "gpio51", "gpio52", "gpio59", "gpio60",
-			       "gpio61", "gpio62";
-			function = "rgmii2";
-			drive-strength = <8>;
-			bias-disable;
-		};
-
-		tx {
-			pins = "gpio27", "gpio28", "gpio29", "gpio30", "gpio31", "gpio32" ;
-			input-disable;
-		};
-	};
-
-	sfp_pins: sfp-pins {
-		mux {
-			pins = "gpio49", "gpio50", "gpio63", "gpio67", "gpio68";
-			function = "gpio";
-			drive-strength = <16>;
-			bias-disable;
-		};
-	};
-
-	spi2_pins: spi2-pins {
-		mux {
-			pins = "gpio22", "gpio23", "gpio25";
-			function = "gsbi2";
-			drive-strength = <10>;
-			bias-none;
-		};
-	};
-
-	spi6_pins: spi6-pins {
-		mux {
-			pins = "gpio55", "gpio58";
-			function = "gsbi6";
-			drive-strength = <10>;
-			bias-none;
-		};
-	};
-
-	switch0_reset_pin: switch0-reset-pin {
-		mux {
-			pins = "gpio16";
-			function = "gpio";
-			drive-strength = <16>;
-			bias-pull-down;
-			output-high;
-		};
-	};
-
-	switch1_reset_pin: switch1-reset-pin {
-		mux {
-			pins = "gpio17";
-			function = "gpio";
-			drive-strength = <16>;
-			bias-pull-down;
-			output-high;
-		};
-	};
-
-	usb0_pwr_en_pins: usb0-pwr-en-pins {
-		mux {
-			pins = "gpio4";
-			function = "gpio";
-			drive-strength = <16>;
-			bias-disable;
-			output-high;
-		};
-	};
+&hs_phy_0 { /* USB3 port 0 HS phy */
+	clocks = <&gcc USB30_1_UTMI_CLK>;
+	status = "okay";
 };
 
-&soc {
-	gsbi1: gsbi@12440000 {
-		compatible = "qcom,gsbi-v1.0.0";
-		cell-index = <1>;
-		reg = <0x12440000 0x100>;
-		clocks = <&gcc GSBI1_H_CLK>;
-		clock-names = "iface";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-		status = "disabled";
-
-		syscon-tcsr = <&tcsr>;
-
-		uart1: serial@12450000 {
-			compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
-			reg = <0x12450000 0x1000>,
-				  <0x12440000 0x1000>;
-			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI1_UART_CLK>, <&gcc GSBI1_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-		};
-
-		i2c@12460000 {
-			compatible = "qcom,i2c-qup-v1.1.1";
-			reg = <0x12460000 0x1000>;
-			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI1_QUP_CLK>, <&gcc GSBI1_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-
-			#address-cells = <1>;
-			#size-cells = <0>;
-		};
-	};
-
-	gsbi3: gsbi@16200000 {
-		compatible = "qcom,gsbi-v1.0.0";
-		cell-index = <3>;
-		reg = <0x16200000 0x100>;
-		clocks = <&gcc GSBI3_H_CLK>;
-		clock-names = "iface";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-		status = "disabled";
-
-		syscon-tcsr = <&tcsr>;
-
-		uart3: serial@16240000 {
-			compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
-			reg = <0x16240000 0x1000>,
-				  <0x16200000 0x1000>;
-			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI3_UART_CLK>, <&gcc GSBI3_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-		};
-
-		i2c@16280000 {
-			compatible = "qcom,i2c-qup-v1.1.1";
-			reg = <0x16280000 0x1000>;
-			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI3_QUP_CLK>, <&gcc GSBI3_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-
-			#address-cells = <1>;
-			#size-cells = <0>;
-		};
-	};
-
-	gsbi6: gsbi@16500000 {
-		qcom,mode = <GSBI_PROT_SPI>;
-		compatible = "qcom,gsbi-v1.0.0";
-		cell-index = <6>;
-		reg = <0x16500000 0x100>;
-		clocks = <&gcc GSBI6_H_CLK>;
-		clock-names = "iface";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-
-		syscon-tcsr = <&tcsr>;
-
-		uart6: serial@16540000 {
-			compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
-			reg = <0x16540000 0x1000>,
-				  <0x16500000 0x1000>;
-			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI6_UART_CLK>, <&gcc GSBI6_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-		};
-
-		i2c@16580000 {
-			compatible = "qcom,i2c-qup-v1.1.1";
-			reg = <0x16580000 0x1000>;
-			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI6_QUP_CLK>, <&gcc GSBI6_H_CLK>;
-			clock-names = "core", "iface";
-			status = "disabled";
-
-			#address-cells = <1>;
-			#size-cells = <0>;
-		};
-
-		spi@16580000 {
-			compatible = "qcom,spi-qup-v1.1.1";
-			reg = <0x16580000 0x1000>;
-			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&gcc GSBI6_QUP_CLK>, <&gcc GSBI6_H_CLK>;
-			clock-names = "core", "iface";
-
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			pinctrl-0 = <&spi6_pins>;
-			pinctrl-names = "default";
-
-			cs-gpios = <&qcom_pinmux 57 GPIO_ACTIVE_HIGH>;
-
-			spi-max-frequency = <15000000>;
-		};
-	};
-
-	mdio1: mdio@37200000 {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		compatible = "qcom,ipq8064-mdio", "syscon";
-		reg = <0x37200000 0x200000>;
-		resets = <&gcc GMAC_CORE2_RESET>;
-		reset-names = "stmmaceth";
-		clocks = <&gcc GMAC_CORE2_CLK>;
-		clock-names = "stmmaceth";
-
-		pinctrl-0 = <&mdio1_pins>;
-		pinctrl-names = "default";
-
-		ethernet-phy@0 {
-			reg = <0>;
-			qca,ar8327-initvals = <
-				0x00004 0x0000080   /* PAD0_MODE */
-				0x00008 0x1000000   /* PAD5_MODE */
-				0x0000c 0x80        /* PAD6_MODE */
-				0x00010 0x2613A0    /* SERDES DISABLE */
-				0x000e4 0xaa545     /* MAC_POWER_SEL */
-				0x000e0 0xc74164de  /* SGMII_CTRL */
-				0x0007c 0x4e        /* PORT0_STATUS */
-				0x00094 0x4e        /* PORT6_STATUS */
-				0x00970 0x1e864443  /* QM_PORT0_CTRL0 */
-				0x00974 0x000001c6  /* QM_PORT0_CTRL1 */
-				0x00978 0x19008643  /* QM_PORT1_CTRL0 */
-				0x0097c 0x000001c6  /* QM_PORT1_CTRL1 */
-				0x00980 0x19008643  /* QM_PORT2_CTRL0 */
-				0x00984 0x000001c6  /* QM_PORT2_CTRL1 */
-				0x00988 0x19008643  /* QM_PORT3_CTRL0 */
-				0x0098c 0x000001c6  /* QM_PORT3_CTRL1 */
-				0x00990 0x19008643  /* QM_PORT4_CTRL0 */
-				0x00994 0x000001c6  /* QM_PORT4_CTRL1 */
-				0x00998 0x1e864443  /* QM_PORT5_CTRL0 */
-				0x0099c 0x000001c6  /* QM_PORT5_CTRL1 */
-				0x009a0 0x1e864443  /* QM_PORT6_CTRL0 */
-				0x009a4 0x000001c6  /* QM_PORT6_CTRL1 */
-			>;
-			qca,ar8327-vlans = <
-				0x1	0x7e	    /* VLAN1 Ports 1/2/3/4/5/6 */
-			>;
-		};
-
-		ethernet-phy@4 {
-			reg = <4>;
-			qca,ar8327-initvals = <
-				0x000e4 0x6a545     /* MAC_POWER_SEL */
-				0x0000c 0x80        /* PAD6_MODE */
-			>;
-		};
-	};
+&ss_phy_0 { /* USB3 port 0 SS phy */
+	clocks = <&gcc USB30_1_MASTER_CLK>;
+	status = "okay";
 };
 
-&usb3_0 { /* USB3 port 0 HS phy */
-//			clocks = <&gcc USB30_1_UTMI_CLK>;
+&usb3_0 {
+	clocks = <&gcc USB30_1_MASTER_CLK>;
 	pinctrl-0 = <&usb0_pwr_en_pins>;
 	pinctrl-names = "default";
-//	status = "okay";
+	status = "okay";
+};
+
+&mdio0 {
+	status = "okay";
+
+	pinctrl-0 = <&mdio0_pins>;
+	pinctrl-names = "default";
+
+	ethernet-phy@0 {
+		reg = <0>;
+		qca,ar8327-initvals = <
+			0x00004 0x07680000  /* PAD0_MODE */
+			0x00008 0x01000000  /* PAD5_MODE */
+			0x0000c 0x00000080  /* PAD6_MODE */
+			0x00010 0x002613A0  /* POWER_ON_STRIP. Disable SERNES_AEN */
+			0x000e0 0xc741e7de  /* SGMII_CTRL */
+			0x000e4 0x0002a545  /* MAC_POWER_SEL */
+			0x0007c 0x4e        /* PORT0_STATUS */
+			0x00094 0x4e        /* PORT6_STATUS */
+		>;
+		qca,ar8327-vlans = <
+			0x1	0x7f	    /* VLAN1 Ports 0/1/2/3/4/5/6 */
+		>;
+	};
+
+	ethernet-phy@4 {
+		reg = <4>;
+	};
+};
+
+&mdio1 {
+	status = "okay";
+
+	pinctrl-0 = <&mdio1_pins>;
+	pinctrl-names = "default";
+
+	ethernet-phy@0 {
+		reg = <0>;
+		qca,ar8327-initvals = <
+			0x00004 0x00080080  /* PAD0_MODE */
+			0x00008 0000000000  /* PAD5_MODE */
+			0x0000c 0x00000000  /* PAD6_MODE */
+			0x00010 0x002613A0  /* POWER_ON_STRIP. Disable SERNES_AEN */
+			0x000e0 0xc741e7de  /* SGMII_CTRL */
+			0x000e4 0x0006a545  /* MAC_POWER_SEL */
+			0x0007c 0x4e        /* PORT0_STATUS */
+			0x00094 0x4e        /* PORT6_STATUS */
+		>;
+		qca,ar8327-vlans = <
+			0x1	0x7f	    /* VLAN1 Ports 0/1/2/3/4/5/6 */
+		>;
+	};
+
+	ethernet-phy@4 {
+		reg = <4>;
+	};
+};
+
+&gmac0 { /* switch0 port 0 */
+	mdiobus = <&mdio0>;
+	mtd-mac-address = <&hard_config 0x10>;
+	mtd-mac-address-increment = <0>;
+	phy-mode = "rgmii";
+	pinctrl-0 = <&rgmii2_pins>;
+	pinctrl-names = "default";
+	qcom,id = <0>;
+	status = "okay";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&gmac1 { /* SFP */
+	mtd-mac-address = <&hard_config 0x10>;
+	mtd-mac-address-increment = <1>;
+	phy-mode = "sgmii";
+	qcom,id = <1>;
+	//sfp = <&sfp_gmac1>;
+	status = "okay";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&gmac2 { /* switch0 port 6 */
+	mdiobus = <&mdio0>;
+	mtd-mac-address = <&hard_config 0x10>;
+	mtd-mac-address-increment = <2>;
+	phy-mode = "sgmii";
+	qcom,id = <2>;
+	status = "okay";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&gmac3 { /* switch1 port 0 */
+	mdiobus = <&mdio1>;
+	mtd-mac-address = <&hard_config 0x10>;
+	mtd-mac-address-increment = <3>;
+	phy-mode = "sgmii";
+	qcom,id = <3>;
+	status = "okay";
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
 };

@@ -1,7 +1,7 @@
 #
 # Auxiliary kernel loader for Qualcom IPQ-4XXX/806X based boards
 #
-#  Copyright (C) 2019 Sergey Sergeev <adron@mstnt.com>
+#  Copyright (C) 2019-2020 Sergey Sergeev <adron@mstnt.com>
 #
 #  This program is free software; you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License version 2 as published
@@ -10,54 +10,58 @@
 
 CPU_TYPE := IPQ4XXX
 #+72M. realloc memory address
-TEXT_BASE := 0x44800000
+TEXT_BASE	:= 0x84800000
 #RouterBOOT auto realloc flag value address. Kernel size is limited < 6M !
 TEXT_BASE2 := 0x01100000
 #fat kernels start size 5M
 FAT_SIZE_START := 5000000
 #for fat kernels <= 12M
 TEXT_BASE2_FAT := 0x00000000
+#enable or disable UART output
+UART := NONE
 
 #ubi image vars
 BLOCKSIZE := 256k
-PAGESIZE := 4096
+PAGESIZE	:= 4096
+LEBSIZE		:= 253952
+LEBCOUNT	:= 60
 
-CC := $(CROSS_COMPILE)gcc
-LD := $(CROSS_COMPILE)ld
+CC      := $(CROSS_COMPILE)gcc
+LD      := $(CROSS_COMPILE)ld
 OBJCOPY	:= $(CROSS_COMPILE)objcopy
 OBJDUMP	:= $(CROSS_COMPILE)objdump
 
-BIN_FLAGS := -O binary -R .ARM.attributes -R .comment -R .debug.* -S
+BIN_FLAGS	:= -O binary -R .ARM.attributes -R .comment -R .debug.* -S
 
-CFLAGS = -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=$(TEXT_BASE) \
-			-DCONFIG_ARM -D__ARM__ -fPIC -Wall -Wstrict-prototypes \
-			-Wno-format-security -Wno-format-nonliteral \
-			-fno-stack-protector -fstack-usage -pipe \
+CFLAGS = -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=$(TEXT_BASE) 	 			\
+			-DCONFIG_ARM -D__ARM__ -fPIC -Wall -Wstrict-prototypes 			\
+			-Wno-format-security -Wno-format-nonliteral 								\
+			-fno-stack-protector -fstack-usage -pipe 										\
 			-marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv7-a \
-			-mno-unaligned-access -fno-builtin -ffreestanding \
+			-mno-unaligned-access -fno-builtin -ffreestanding 				  \
 			-g -Os -fno-common -ffixed-r8
 
 ifeq ($(CPU_TYPE),IPQ4XXX)
-	CFLAGS += -DCONFIG_IPQ4XXX
+  CFLAGS += -DCONFIG_IPQ4XXX
 endif
 ifeq ($(CPU_TYPE),IPQ806X)
-	CFLAGS += -DCONFIG_IPQ806X
+  CFLAGS += -DCONFIG_IPQ806X
 endif
 
 #Com port number(for printf)
 ifeq ($(UART),)
-	CFLAGS += -DUARTx_DM_BASE=UART1_DM_BASE
+  CFLAGS += -DUARTx_DM_BASE=NONE
 else
 ifeq ($(UART),NONE)
-	CFLAGS += -DUARTx_DM_BASE=NONE
+  CFLAGS += -DUARTx_DM_BASE=NONE
 else
-	CFLAGS += -DUARTx_DM_BASE=UART$(UART)_DM_BASE
+  CFLAGS += -DUARTx_DM_BASE=UART$(UART)_DM_BASE
 endif
 endif
 
 #debug messages
 ifeq ($(DEBUG),true)
-	CFLAGS += -DDEBUG
+  CFLAGS += -DDEBUG
 endif
 
 CFLAGS += -I./src/include
@@ -69,35 +73,35 @@ LDFLAGS_DATA = -r -b binary --oformat $(O_FORMAT) -o
 
 O_FORMAT = $(shell $(OBJDUMP) -i | head -2 | grep elf32)
 
-ldr := bin/loader
+ldr 		:= bin/loader
 ldr-bin := bin/loader.bin
 ldr-elf := bin/loader.elf
 ldr-ubifs := bin/loader.ubifs
 ldr-ubi := bin/loader.ubi
 
-tgs-h := io.h iomap.h LzmaDecode.h LzmaTypes.h printf.h types.h \
-			uimage/fdt.h uimage/legacy.h
+tgs-h 	:= io.h iomap.h LzmaDecode.h LzmaTypes.h printf.h types.h \
+           uimage/fdt.h uimage/legacy.h
 tgs-lds	:= kernel-data.lds loader2.lds loader.lds
-tgs-o := start.o board.o cpu.o fdt.o loader.o lzma.o LzmaDecode.o \
-			printf.o qcom_uart.o watchdog.o data.o
-tgs2-o := head.o data2.o watchdog.o
-tgs-h := $(tgs-h:%=src/include/%)
+tgs-o 	:= start.o board.o cpu.o fdt.o loader.o lzma.o LzmaDecode.o \
+           printf.o qcom_uart.o watchdog.o data.o
+tgs2-o	:= head.o data2.o watchdog.o
+tgs-h 	:= $(tgs-h:%=src/include/%)
 tgs-lds := $(tgs-lds:%=src/%)
-tgs-o := $(tgs-o:%=objs/%)
-tgs2-o := $(tgs2-o:%=objs/%)
+tgs-o 	:= $(tgs-o:%=objs/%)
+tgs2-o 	:= $(tgs2-o:%=objs/%)
 
 ifeq ($(KERNEL_IMAGE),)
-	KERNEL_IMAGE_FS = 0
+  KERNEL_IMAGE_FS = 0
 endif
 ifeq ($(shell test -f $(KERNEL_IMAGE); echo $$?),0)
-	KERNEL_IMAGE_FS = $(shell stat -L -c %s $(KERNEL_IMAGE))
+  KERNEL_IMAGE_FS = $(shell stat -L -c %s $(KERNEL_IMAGE))
 else
-	KERNEL_IMAGE_FS = 0
+  KERNEL_IMAGE_FS = 0
 endif
 
 #Switching to use kernel size for fat images.
 ifeq ($(shell test ${KERNEL_IMAGE_FS} -gt ${FAT_SIZE_START}; echo $$?),0)
-	TEXT_BASE2 = $(TEXT_BASE2_FAT)
+  TEXT_BASE2 = $(TEXT_BASE2_FAT)
 endif
 
 #Create the necessary directories
@@ -106,6 +110,11 @@ $(shell mkdir -p objs maps bin)
 elf: $(ldr-elf)
 ubi: $(ldr-ubi)
 all: $(ldr-ubi)
+
+#test leb values
+lebtest:
+	@echo LEBSIZE=!$(LEBSIZE)!
+	@echo LEBCOUNT=!$(LEBCOUNT)!
 
 # Don't build dependencies, this may die if $(CC) isn't gcc
 dep:
@@ -152,7 +161,7 @@ $(ldr-ubifs): $(ldr-elf)
 	mkdir ubi/ubifs-rootdir
 	cp bin/loader.elf ubi/ubifs-rootdir/kernel
 	$(STAGING_DIR_HOST)/bin/mkfs.ubifs \
-		-m $(PAGESIZE) -e 253952 -c 60 --compr=none \
+		-m $(PAGESIZE) -e $(LEBSIZE) -c $(LEBCOUNT) --compr=none \
 		-r ubi/ubifs-rootdir $(ldr-ubifs)
 	rm -Rf ubi/ubifs-rootdir
 

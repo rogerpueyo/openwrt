@@ -257,15 +257,15 @@ PrintString(char * buf, char* s, int length, int ladjust)
     return length;
 }
 
-#define wr2p(tmp){ \
-	iters_count++; \
-	if((tmp) <= 9){ \
-		*p++ = '0' + (tmp); \
-	}else if(upcase) { \
+#define wr2p(tmp){					 \
+	iters_count++;						 \
+	if((tmp) <= 9){						 \
+		*p++ = '0' + (tmp);			 \
+	}else if(upcase) {				 \
 		*p++ = 'A' + (tmp) - 10; \
-	}else{ \
+	}else{										 \
 		*p++ = 'a' + (tmp) - 10; \
-	} \
+	}													 \
 }
 
 /* 32 bit DEC unsigned int convert to string */

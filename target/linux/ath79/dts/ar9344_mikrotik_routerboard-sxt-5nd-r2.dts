@@ -6,3 +6,11 @@
 	compatible = "mikrotik,routerboard-sxt-5nd-r2", "qca,ar9344";
 	model = "MikroTik RouterBOARD SXT 5nD r2 (SXT Lite5)";
 };
+
+&routerboot {
+	partition@10000 {
+		label = "bootloader2";
+		reg = <0x10000 0x10000>;
+		read-only;
+	};
+};

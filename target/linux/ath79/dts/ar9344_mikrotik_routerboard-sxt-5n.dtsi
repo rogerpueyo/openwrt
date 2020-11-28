@@ -96,9 +96,9 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			partition@0 {
+			routerboot: partition@0 {
 				label = "RouterBoot";
-				reg = <0x0 0x20000>;
+				reg = <0x0 0x0>;
 				read-only;
 				compatible = "mikrotik,routerboot-partitions";
 				#address-cells = <1>;
@@ -120,12 +120,6 @@
 				};
 
 				soft_config {
-				};
-
-				partition@10000 {
-					label = "bootloader2";
-					reg = <0x10000 0x10000>;
-					read-only;
 				};
 			};
 		};

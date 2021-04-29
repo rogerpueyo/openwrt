@@ -1,0 +1,70 @@
+diff -rNu a/drivers/spi/spi-ar934x.c b/drivers/spi/spi-ar934x.c
+--- a/drivers/spi/spi-ar934x.c	2021-04-23 08:48:44.162167816 +0300
++++ b/drivers/spi/spi-ar934x.c	2021-04-23 09:05:29.645378181 +0300
+@@ -74,6 +74,48 @@
+ 	return 0;
+ }
+ 
++static int interbyte_spacing_txrx(struct ar934x_spi *sp, struct spi_device *spi,
++struct spi_transfer *t, unsigned long trx_done, unsigned long trx_cur, u8 term)
++{
++	const u8 *tx_buf;
++	u8 *rx_buf;
++	int i, _term, stat = 0;
++	u32 reg;
++
++	/* doing per-byte transfer and receive(at the same time) */
++	for (i = 0; i < trx_cur; i++) {
++		_term = term;
++		/* if not the last loop iteration */
++		if(_term && (i + 1 < trx_cur))
++			_term = 0;
++
++		if (t->tx_buf) {
++			tx_buf = t->tx_buf + trx_done;
++			reg = tx_buf[i];
++			iowrite32(reg, sp->base + AR934X_SPI_DATAOUT);
++		}
++
++		reg = AR934X_SPI_SHIFT_VAL(spi->chip_select, _term, 8);
++		iowrite32(reg, sp->base + AR934X_SPI_REG_SHIFT_CTRL);
++		stat = readl_poll_timeout(
++				sp->base + AR934X_SPI_REG_SHIFT_CTRL, reg,
++				!(reg & AR934X_SPI_SHIFT_EN), 0, 5);
++		if (stat < 0)
++			goto end;
++
++		if (t->rx_buf) {
++			reg = ioread32(sp->base + AR934X_SPI_DATAIN);
++			rx_buf = t->rx_buf + trx_done;
++			rx_buf[i] = reg;
++		}
++
++		if (!_term)
++			udelay(t->word_delay_usecs);
++	}
++end:
++	return stat;
++}
++
+ static int ar934x_spi_transfer_one_message(struct spi_controller *master,
+ 					   struct spi_message *m)
+ {
+@@ -112,6 +154,16 @@
+ 			else if (list_is_last(&t->transfer_list, &m->transfers))
+ 				term = 1;
+ 
++			if (t->word_delay_usecs && (t->bits_per_word == 8)) {
++				/* adds delays between words. this is useful for slow devices
++					 that need a bit of time to setup the next transfer. */
++				stat = interbyte_spacing_txrx(
++					sp, spi, t,	trx_done, trx_cur, term);
++				if (stat < 0)
++					goto msg_done;
++				continue;
++			}
++
+ 			if (t->tx_buf) {
+ 				tx_buf = t->tx_buf + trx_done;
+ 				reg = tx_buf[0];
+

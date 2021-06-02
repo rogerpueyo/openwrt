@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca9533_mikrotik_routerboard-16m.dtsi"
+
+/ {
+	compatible = "mikrotik,routerboard-750r2", "qca,qca9533";
+	model = "MikroTik RouterBOARD 750r2 (hEX lite)";
+
+	aliases {
+		led-boot = &led_usr;
+		led-failsafe = &led_usr;
+		led-upgrade = &led_usr;
+		led-running = &led_usr;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+
+		led_usr: usr {
+			label = "green:usr";
+			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
+		};
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	phy-handle = <&swphy4>;
+
+};
+
+&eth1 {
+	status = "okay";
+};

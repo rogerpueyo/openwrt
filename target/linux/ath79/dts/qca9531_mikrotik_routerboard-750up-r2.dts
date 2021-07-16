@@ -3,8 +3,8 @@
 #include "qca953x_mikrotik_routerboard-16m.dtsi"
 
 / {
-	compatible = "mikrotik,routerboard-750-r2", "qca,qca9533";
-	model = "MikroTik RouterBOARD 750 r2 (hEX lite)";
+	compatible = "mikrotik,routerboard-750up-r2", "qca,qca9533";
+	model = "MikroTik RouterBOARD 750UP r2 (hEX lite)";
 
 	aliases {
 		led-boot = &led_usr;
@@ -47,6 +47,16 @@
 			gpios = <&ssr 4 GPIO_ACTIVE_LOW>;
 		};
 	};
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		usb_power {
+			gpio-export,name = "power-usb";
+			gpio-export,output = <1>;
+			gpios = <&ssr 5 GPIO_ACTIVE_HIGH>;
+		};
+	};
 };
 
 &pinmux {
@@ -70,6 +80,14 @@
 		reg = <1>;
 		spi-max-frequency = <10000000>;
 	};
+};
+
+&usb_phy {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
 };
 
 &eth0 {

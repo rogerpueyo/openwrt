@@ -1,0 +1,116 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca953x_mikrotik_routerboard-16m.dtsi"
+
+/ {
+	compatible = "mikrotik,routerboard-750up-r2", "qca,qca9533";
+	model = "MikroTik RouterBOARD 750UP r2 (hEX lite)";
+
+	aliases {
+		led-boot = &led_usr;
+		led-failsafe = &led_usr;
+		led-upgrade = &led_usr;
+		led-running = &led_usr;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+
+		led_usr: usr {
+			label = "green:usr";
+			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
+		};
+
+		led1 {
+			label = "green:led1";
+			gpios = <&ssr 0 GPIO_ACTIVE_LOW>;
+		};
+
+		led2 {
+			label = "green:led2";
+			gpios = <&ssr 1 GPIO_ACTIVE_LOW>;
+		};
+
+		led3 {
+			label = "green:led3";
+			gpios = <&ssr 2 GPIO_ACTIVE_LOW>;
+		};
+
+		led4 {
+			label = "green:led4";
+			gpios = <&ssr 3 GPIO_ACTIVE_LOW>;
+		};
+
+		led5 {
+			label = "green:led5";
+			gpios = <&ssr 4 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		usb_power {
+			gpio-export,name = "power-usb";
+			gpio-export,output = <1>;
+			gpios = <&ssr 5 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+// Disable CS1 on GPIO11 and CS2 on GPIO12
+// &pinmux {
+// 	// GPIO11 outputs CS1 for 74HC595-driven GPIOs
+// 	pmx_spi_cs1: pinmux_spi_cs1 {
+// 		pinctrl-single,bits = <0x8 0x0a000000 0xff000000>;
+// 	};
+//
+// 	// GPIO12 outputs CS2 for ATTiny461A
+// 		pmx_spi_cs2: pinmux_spi_cs2 {
+// 		pinctrl-single,bits = <0xc 0x0000000b 0x000000ff>;
+// 	};
+// };
+
+&spi {
+	pinctrl-names = "default";
+	// Disable CS1 on GPIO11 and CS2 on GPIO12
+	// pinctrl-0 = <&pmx_spi_cs1>, <&pmx_spi_cs2>;
+
+	num-cs = <3>;
+
+	ssr: ssr@1 {
+		compatible = "fairchild,74hc595";
+		gpio-controller;
+		#gpio-cells = <2>;
+		registers-number = <1>;
+		reg = <1>;
+		spi-max-frequency = <2200000>;
+	};
+
+	attiny: spidev@2 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "linux,spidev";
+		reg = <2>;
+		spi-max-frequency = <2200000>;
+	};
+};
+
+&usb_phy {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&eth0 {
+	status = "okay";
+
+	phy-handle = <&swphy4>;
+};
+
+&eth1 {
+	status = "okay";
+};

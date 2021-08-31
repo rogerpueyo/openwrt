@@ -101,6 +101,7 @@
 
 			soft_config {
 				label = "soft_config";
+				read-only;
 			};
 		};
 	};

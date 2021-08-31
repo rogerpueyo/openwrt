@@ -160,6 +160,7 @@
 			};
 
 			soft_config {
+				read-only;
 			};
 		};
 	};

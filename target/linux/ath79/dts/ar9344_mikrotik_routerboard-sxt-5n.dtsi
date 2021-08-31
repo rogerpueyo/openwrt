@@ -120,6 +120,7 @@
 				};
 
 				soft_config {
+					read-only;
 				};
 
 				partition@10000 {

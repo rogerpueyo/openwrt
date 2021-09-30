@@ -10,6 +10,14 @@ define Device/mikrotik_nor
 		check-size | append-metadata
 endef
 
+define Device/mikrotik_disc-lite5-ac
+	$(call Device/mikrotik_nor)
+	DEVICE_MODEL := DISC Lite5 ac (RBDiscG-5acD)
+	SOC := qcom-ipq4018
+	DEVICE_PACKAGES := ipq-wifi-mikrotik_disc-lite5-ac rssileds
+endef
+TARGET_DEVICES += mikrotik_disc-lite5-ac
+
 define Device/mikrotik_hap-ac2
 	$(call Device/mikrotik_nor)
 	DEVICE_MODEL := hAP ac2

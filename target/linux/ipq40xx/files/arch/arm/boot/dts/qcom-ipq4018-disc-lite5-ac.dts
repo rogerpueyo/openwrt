@@ -4,12 +4,12 @@
 #include "qcom-ipq4018-lhg-dk.dtsi"
 
 / {
-	model = "MikroTik SXTsq 5 ac (RBSXTsqG-5acD)";
-	compatible = "mikrotik,sxtsq-5-ac";
+	model = "MikroTik DISC Lite5 ac (RBDiscG-5acD)";
+	compatible = "mikrotik,disc-lite5-ac";
 };
 
 &wifi1 {
 	status = "okay";
 
-	qcom,ath10k-calibration-variant = "MikroTik-SXTsq-5-ac";
+	qcom,ath10k-calibration-variant = "MikroTik-DISC-Lite5-ac";
 };

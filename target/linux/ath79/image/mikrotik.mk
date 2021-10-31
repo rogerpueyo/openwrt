@@ -46,6 +46,15 @@ define Device/mikrotik_routerboard-lhg-2nd
 endef
 TARGET_DEVICES += mikrotik_routerboard-lhg-2nd
 
+define Device/mikrotik_routerboard-omnitikg-5hacd
+  $(Device/mikrotik_nor)
+  SOC := qca9557
+  DEVICE_MODEL := RouterBOARD OmniTikG-5HacD (OmniTIK 5 ac)
+  IMAGE_SIZE := 16256k
+endef
+TARGET_DEVICES += mikrotik_routerboard-omnitikg-5hacd
+
+
 define Device/mikrotik_routerboard-sxt-5nd-r2
   $(Device/mikrotik_nand)
   SOC := ar9344

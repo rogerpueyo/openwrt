@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca9557_mikrotik_routerboard-16m.dtsi"
+
+/ {
+	compatible = "mikrotik,routerboard-omnitikg-5hacd", "qca,qca9533";
+	model = "MikroTik RouterBOARD OmniTikG-5HacD (OmniTIK 5 ac)";
+};
+
+&pcie0 {
+	status = "okay";
+
+	ath10k: wifi@0,0 {
+		compatible = "qcom,ath10k";
+		reg = <0 0 0 0 0>;
+		#gpio-cells = <2>;
+		gpio-controller;
+	};
+};
+
+&pcie1 {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&usb_phy0 {
+	status = "okay";
+};
+
+&usb1 {
+	status = "okay";
+};
+
+&usb_phy1 {
+	status = "okay";
+};

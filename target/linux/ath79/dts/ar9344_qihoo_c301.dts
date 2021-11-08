@@ -99,8 +99,12 @@
 &spi {
 	status = "okay";
 
-	pinctrl-names = "default";
-	pinctrl-0 = <&pmx_spi_cs1>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmx_spi_cs1>;
+
+		num-cs = <2>;
+		cs-gpios= <0>, <0>;
 
 	flash@0 {
 		#address-cells = <1>;

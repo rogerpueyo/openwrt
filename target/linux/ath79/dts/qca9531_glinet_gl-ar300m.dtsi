@@ -74,6 +74,9 @@
 &spi {
 	status = "okay";
 
+	num-cs = <2>;
+	cs-gpios = <0>, <0>;
+
 	flash@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;

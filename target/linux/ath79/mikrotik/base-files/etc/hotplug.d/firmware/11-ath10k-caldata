@@ -15,7 +15,8 @@ case "$FIRMWARE" in
 	mikrotik,routerboard-951ui-2nd|\
 	mikrotik,routerboard-952ui-5ac2nd|\
 	mikrotik,routerboard-962uigs-5hact2hnt|\
-	mikrotik,routerboard-wap-g-5hact2hnd)
+	mikrotik,routerboard-wap-g-5hact2hnd|\
+	mikrotik,routerboard-omnitik-g-5hacd)
 		caldata_sysfsload_from_file $wlan_data 0x5000 0x844
 		;;
 	esac

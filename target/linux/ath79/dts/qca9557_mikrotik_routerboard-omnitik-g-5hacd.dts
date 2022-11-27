@@ -1,0 +1,163 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca955x.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	compatible = "mikrotik,routerboard-omnitik-g-5hacd", "qca,qca9557";
+	model = "MikroTik RouterBOARD OmniTIK G-5HacD (OmniTIK 5 ac)";
+
+	aliases {
+		led-boot = &led_power;
+		led-failsafe = &led_power;
+		led-upgrade = &led_power;
+		serial0 = &uart;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_power: power {
+			label = "blue:power";
+			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+			default-state = "on";
+		};
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		buzzer {
+				gpio-export,name = "buzzer";
+				gpio-export,output = <0>;
+				gpios = <&gpio 4 GPIO_ACTIVE_HIGH>;
+		};
+
+		usb_power {
+			gpio-export,name = "usb-power";
+			gpio-export,output = <1>;
+			gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+	};
+};
+	
+&spi {
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <40000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "RouterBoot";
+				reg = <0x0 0x20000>;
+				compatible = "mikrotik,routerboot-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					label = "bootloader1";
+					reg = <0x0 0x0>;
+					read-only;
+				};
+
+				hard_config {
+					read-only;
+				};
+
+				bios {
+					size = <0x1000>;
+					read-only;
+				};
+
+				partition@10000 {
+					label = "bootloader2";
+					reg = <0x10000 0x0>;
+					read-only;
+				};
+
+				soft_config {
+				};
+			};
+
+			partition@20000 {
+				compatible = "mikrotik,minor";
+				label = "firmware";
+				reg = <0x020000 0xfe0000>;
+			};
+		};
+	};
+};
+
+&pcie1 {
+	status = "okay";
+
+	wifi@0,0 {
+		compatible = "qcom,ath10k";
+		reg = <0 0 0 0 0>;
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	phy0: ethernet-phy@0 {
+		reg = <0>;
+
+		qca,ar8327-initvals = <
+			/* PAD0_MODE from vendor firmware
+			 * RGMII_EN, TX/RXCLK_DELAY_EN, TXCLK_DELAY_SEL=1
+			 * as in RB960x
+			 */
+			0x04 0x07400000 /* PAD0_MODE */
+			0x7c 0x0000007e /* PORT0_STATUS */
+			>;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	phy-handle = <&phy0>;
+	/* gigabit pll-data from vendor firmware
+	 * TX_INVERT, TX_DELAY=3, GIGE, OFFSET_PHASE
+	 * as in RB960x
+	 */
+	pll-data = <0x8f000000 0x00000101 0x00001616>;
+
+	gmac-config {
+		device = <&gmac>;
+		rgmii-enabled = <1>;
+	};
+};
+
+&wmac {
+	status = "disabled";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&usb_phy0 {
+	status = "okay";
+};

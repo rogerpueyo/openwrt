@@ -102,6 +102,15 @@ define Device/mikrotik_routerboard-mapl-2nd
 endef
 TARGET_DEVICES += mikrotik_routerboard-mapl-2nd
 
+define Device/mikrotik_routerboard-omnitik-g-5hacd
+  $(Device/mikrotik_nor)
+  SOC := qca9557
+  DEVICE_MODEL := RouterBOARD OmniTIK G-5HacD (OmniTIK 5 ac)
+  IMAGE_SIZE := 16256k
+  DEVICE_PACKAGES += kmod-ath10k-ct ath10k-firmware-qca988x-ct kmod-usb2
+endef
+TARGET_DEVICES += mikrotik_routerboard-omnitik-g-5hacd
+
 define Device/mikrotik_routerboard-sxt-5nd-r2
   $(Device/mikrotik_nand)
   SOC := ar9344

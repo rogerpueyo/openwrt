@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qca9558_mikrotik_routerboard-96x.dtsi"
+
+/ {
+	compatible = "mikrotik,routerboard-960pgs-pb", "qca,qca9558";
+	model = "MikroTik RouterBOARD 960PGS-PB (PowerBox Pro)";
+
+	leds {
+		compatible = "gpio-leds";
+
+		sfp {
+			label = "green:sfp";
+			gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&spi {
+	spidev@2 {
+		compatible = "linux,spidev";
+		reg = <2>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		spi-max-frequency = <2200000>;
+	};
+};

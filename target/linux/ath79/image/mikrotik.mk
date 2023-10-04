@@ -94,6 +94,15 @@ define Device/mikrotik_routerboard-952ui-5ac2nd
 endef
 TARGET_DEVICES += mikrotik_routerboard-952ui-5ac2nd
 
+define Device/mikrotik_routerboard-960pgs-pb
+  $(Device/mikrotik_nor)
+  SOC := qca9558
+  DEVICE_MODEL := RouterBOARD 960PGS-PB (PowerBox Pro)
+  DEVICE_PACKAGES += kmod-i2c-gpio kmod-sfp
+  IMAGE_SIZE := 16256k
+endef
+TARGET_DEVICES += mikrotik_routerboard-960pgs-pb
+
 define Device/mikrotik_routerboard-962uigs-5hact2hnt
   $(Device/mikrotik_nor)
   SOC := qca9558

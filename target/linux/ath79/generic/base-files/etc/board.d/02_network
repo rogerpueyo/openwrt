@@ -568,7 +568,7 @@ ath79_setup_interfaces()
 			"0@eth0" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan"
 		;;
 	ubnt,edgeswitch-8xp)
-		ucidef_set_interfaces_lan_wan "eth1" "lan1 lan2 lan3 lan4 lan5 lan6 lan7 lan8"
+		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 lan5 lan6 lan7 lan8" "eth1"
 		;;
 	ubnt,routerstation-pro)
 		ucidef_set_interface_wan "eth0"

@@ -101,6 +101,15 @@ define Device/engenius_ews2910p
 endef
 TARGET_DEVICES += engenius_ews2910p
 
+define Device/hpe_1910-8-poe-65w
+  $(Device/hpe_1920)
+  SOC := rtl8380
+  DEVICE_MODEL := 1910-8-PoE+ 65W (JG537A)
+  DEVICE_PACKAGES += realtek-poe
+  H3C_DEVICE_ID := 0x00000002
+endef
+TARGET_DEVICES += hpe_1910-8-poe-65w
+
 define Device/hpe_1920-8g
   $(Device/hpe_1920)
   SOC := rtl8380

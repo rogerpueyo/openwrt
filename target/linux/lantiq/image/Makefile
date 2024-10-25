@@ -98,6 +98,20 @@ define Device/Default
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | append-metadata
 endef
 
+define Device/AVM
+  DEVICE_VENDOR := AVM
+  KERNEL := kernel-bin | append-dtb | lzma | eva-image
+  KERNEL_INITRAMFS := $$(KERNEL)
+  IMAGE/sysupgrade.bin := append-kernel | pad-to 64k | append-avm-fakeroot | \
+	append-rootfs | pad-rootfs | check-size | append-metadata
+endef
+
+define Device/okli_preloader
+  COMPILE := loader-$(1).bin
+  COMPILE/loader-$(1).bin := loader-okli-compile | lzma
+  KERNEL := kernel-bin | append-dtb | lzma | uImage lzma | prepend-loader-okli $(1)
+endef
+
 define Device/NAND/xway
   BLOCKSIZE := 16k
   PAGESIZE := 512

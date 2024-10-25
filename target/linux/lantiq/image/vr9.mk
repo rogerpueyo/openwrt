@@ -18,6 +18,7 @@ TARGET_DEVICES += alphanetworks_asl56026
 
 define Device/arcadyan_arv7519rw22
   $(Device/dsa-migration)
+  $(Device/okli_preloader)
   DEVICE_VENDOR := Arcadyan
   DEVICE_MODEL := ARV7519RW22
   DEVICE_ALT0_VENDOR := Orange
@@ -25,8 +26,8 @@ define Device/arcadyan_arv7519rw22
   DEVICE_ALT0_VARIANT := 2.1
   DEVICE_ALT1_VENDOR := Astoria Networks
   DEVICE_ALT1_MODEL := ARV7519RW22
-  KERNEL_SIZE := 2048k
   IMAGE_SIZE := 31232k
+  LOADER_FLASH_OFFS := 0x31000
   DEVICE_PACKAGES := kmod-usb-dwc2
   SUPPORTED_DEVICES += ARV7519RW22
   DEFAULT := n

@@ -687,6 +687,17 @@ define Device/comfast_cf-ew72-v2
 endef
 TARGET_DEVICES += comfast_cf-ew72-v2
 
+define Device/comms365_h685f-w
+  $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
+  DEVICE_VENDOR := Comms365
+  DEVICE_MODEL := H685f-W
+  DEVICE_PACKAGES := kmod-ath9k -uboot-envtools
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGE_SIZE := 16000k
+endef
+TARGET_DEVICES += comms365_h685f-w
+
 define Device/confiabits_mt7621-v1
   $(Device/dsa-migration)
   $(Device/uimage-lzma-loader)

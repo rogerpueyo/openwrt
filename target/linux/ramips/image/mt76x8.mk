@@ -199,6 +199,18 @@ define Device/creality_wb-01
 endef
 TARGET_DEVICES += creality_wb-01
 
+define Device/cudy_lt400-v1
+  IMAGE_SIZE := 7872k
+  IMAGES += factory.bin
+  IMAGE/factory.bin := $$(sysupgrade_bin) | check-size | jcg-header 92.122
+  JCG_MAXSIZE := 7872k
+  DEVICE_VENDOR := Cudy
+  DEVICE_MODEL := LT400 v1
+  DEVICE_PACKAGES := kmod-mt76x2
+  SUPPORTED_DEVICES += lt400-v1
+endef
+TARGET_DEVICES += cudy_lt400-v1
+
 define Device/cudy_m1200-v1
   IMAGE_SIZE := 15872k
   DEVICE_VENDOR := Cudy

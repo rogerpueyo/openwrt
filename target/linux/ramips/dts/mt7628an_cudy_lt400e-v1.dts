@@ -101,42 +101,6 @@ aliases {
 			linux,code = <KEY_WPS_BUTTON>;
 		};
 	};
-
-	// leds {
-	// 	compatible = "gpio-leds";
-
-	// 	led_status:status {
-	// 		gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
-	// 		color = <LED_COLOR_ID_GREEN>;
-	// 		function = LED_FUNCTION_STATUS;
-	// 	};
-
-	// 	internet {
-	// 		gpios = <&gpio 40 GPIO_ACTIVE_HIGH>;
-	// 		color = <LED_COLOR_ID_GREEN>;
-	// 		function = LED_FUNCTION_WAN_ONLINE;
-	// 	};
-
-	// 	lan {
-	// 		gpios = <&gpio 43 GPIO_ACTIVE_LOW>;
-	// 		color = <LED_COLOR_ID_GREEN>;
-	// 		function = LED_FUNCTION_LAN;
-	// 	};
-
-	// 	wifi2g {
-	// 		gpios = <&gpio 0 GPIO_ACTIVE_LOW>;
-	// 		color = <LED_COLOR_ID_GREEN>;
-	// 		function = LED_FUNCTION_WLAN_2GHZ;
-	// 		linux,default-trigger = "phy0tpt";
-	// 	};
-
-	// 	wifi5g {
-	// 		gpios = <&gpio 42 GPIO_ACTIVE_LOW>;
-	// 		color = <LED_COLOR_ID_GREEN>;
-	// 		function = LED_FUNCTION_WLAN_5GHZ;
-	// 		linux,default-trigger = "phy1tpt";
-	// 	};	
-	// };
 };
 
 
@@ -147,15 +111,15 @@ aliases {
 	};
 };
 
-&pcie0 {
-	wifi@0,0 {
-		compatible = "mediatek,mt76";
-		reg = <0x0000 0 0 0 0>;
-		nvmem-cells = <&eeprom_factory_8000>, <&macaddr_bdinfo_de00 2>;
-		nvmem-cell-names = "eeprom", "mac-address";
-		ieee80211-freq-limit = <5000000 6000000>;
-	};
-};
+// &pcie0 {
+// 	wifi@0,0 {
+// 		compatible = "mediatek,mt76";
+// 		reg = <0x0000 0 0 0 0>;
+// 		nvmem-cells = <&eeprom_factory_8000>, <&macaddr_bdinfo_de00 2>;
+// 		nvmem-cell-names = "eeprom", "mac-address";
+// 		ieee80211-freq-limit = <5000000 6000000>;
+// 	};
+// };
 
 &wmac {
 	status = "okay";
@@ -172,11 +136,6 @@ aliases {
 &pcie {
 	status = "okay";
 };
-
-// &esw {
-// 	mediatek,portmap = <0x3d>;
-// 	mediatek,portdisable = <0x3e>;
-// };
 
 &ehci {
 	status = "okay";
